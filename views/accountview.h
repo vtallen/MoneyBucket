@@ -2,7 +2,7 @@
 #define ACCOUNTVIEW_H
 
 #include <QWidget>
-#include "accountmodel.h"
+#include "../models/accountmodel.h"
 
 namespace Ui {
 class AccountView;
@@ -18,6 +18,7 @@ public:
 
 private slots:
     void transactionAdded();
+    void addButtonClicked();
 
 private:
     Ui::AccountView *ui;

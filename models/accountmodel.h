@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QVector>
+#include <QDate>
 
 class AccountModel: public QAbstractTableModel
 {
@@ -12,6 +13,13 @@ public:
     enum AccountType {
         BANK_ACCOUNT,
         CREDIT_CARD,
+    };
+
+    enum Columns {
+       DATE,
+       DESCRIPTION,
+       AMOUNT,
+       COLUMNS_MAX,
     };
 
     explicit AccountModel(QObject *parent = nullptr, QString name = "untitled", AccountType accountType = BANK_ACCOUNT);
@@ -27,12 +35,18 @@ public:
     // Getters
     double getBalance();
 
+    // Functions
+    void sortByDate(bool sortDescending);
+
 private:
-    static constexpr int NUM_COLUMNS{3};
+    // Members
     QString m_name;
     const AccountType m_accountType;
-    QVector<QVector<QString>> table;
+    QVector<QVector<QVariant>> table;
 
+    // Functions
+    static bool compareDateAscending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2);
+    static bool compareDateDescending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2);
 };
 
 #endif // CUSTOMTABLEMODEL_H
