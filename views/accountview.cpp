@@ -28,7 +28,6 @@ AccountView::~AccountView()
 
 void AccountView::modelDataChanged() {
     ui->balanceLabel->setText("$" + QString::number(m_model->getBalance()));
-    ui->accountTableView->update();
 }
 
 void AccountView::addButtonClicked() {
