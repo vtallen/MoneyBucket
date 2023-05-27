@@ -13,10 +13,11 @@ AccountView::AccountView(QWidget *parent) :
     ui->accountTableView->setModel(m_model);
     ui->accountTableView->resizeColumnsToContents();
 
-    connect(m_model, &QAbstractItemModel::dataChanged, this, &AccountView::transactionAdded);
+    connect(m_model, &QAbstractItemModel::dataChanged, this, &AccountView::modelDataChanged);
 
     connect(ui->addButton, &QPushButton::clicked, this, &AccountView::addButtonClicked);
-    transactionAdded();
+
+    modelDataChanged();
 }
 
 AccountView::~AccountView()
@@ -25,13 +26,15 @@ AccountView::~AccountView()
 
 }
 
-void AccountView::transactionAdded() {
+void AccountView::modelDataChanged() {
     ui->balanceLabel->setText("$" + QString::number(m_model->getBalance()));
+    ui->accountTableView->update();
 }
 
 void AccountView::addButtonClicked() {
     TransactionDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
         qDebug() << "Accepted";
+        if (dialog.date.isValid()) m_model->addTransaction(dialog.date, dialog.description, dialog.amount);
     }
 }

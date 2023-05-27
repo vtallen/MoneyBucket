@@ -15,11 +15,17 @@ public:
         CREDIT_CARD,
     };
 
+    // If column order is changed, these functions will need to be changed as well: AccountModel::addTransaction
     enum Columns {
        DATE,
        DESCRIPTION,
        AMOUNT,
        COLUMNS_MAX,
+    };
+
+    enum SortMode {
+        DATE_ASCENDING,
+        DATE_DESCENDING,
     };
 
     explicit AccountModel(QObject *parent = nullptr, QString name = "untitled", AccountType accountType = BANK_ACCOUNT);
@@ -35,14 +41,19 @@ public:
     // Getters
     double getBalance();
 
+    // Setters
+    void setSort(SortMode sorting);
+    void addTransaction(QDate date, QString description, double amount);
+
     // Functions
-    void sortByDate(bool sortDescending);
+    void sort();
 
 private:
     // Members
     QString m_name;
     const AccountType m_accountType;
     QVector<QVector<QVariant>> table;
+    SortMode m_sortMode{SortMode::DATE_DESCENDING};
 
     // Functions
     static bool compareDateAscending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2);

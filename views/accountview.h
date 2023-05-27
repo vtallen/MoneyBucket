@@ -17,7 +17,7 @@ public:
     ~AccountView();
 
 private slots:
-    void transactionAdded();
+    void modelDataChanged();
     void addButtonClicked();
 
 private:
