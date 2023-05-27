@@ -6,8 +6,8 @@
 #include <QHBoxLayout>
 #include <QStandardItemModel>
 
-#include "sidebar.h"
-#include "accountview.h"
+#include "ui/sidebar.h"
+#include "views/accountview.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

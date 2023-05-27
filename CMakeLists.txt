@@ -18,11 +18,11 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
 
-        accountmodel.cpp accountmodel.h
+        models/accountmodel.cpp models/accountmodel.h
 
-        accountstablemodel.h accountstablemodel.cpp
-        sidebar.cpp sidebar.h sidebar.ui
-        accountview.h accountview.cpp accountview.ui
+        ui/sidebar.cpp ui/sidebar.h ui/sidebar.ui
+        ui/transactiondialog.cpp ui/transactiondialog.h ui/transactiondialog.ui
+        views/accountview.h views/accountview.cpp views/accountview.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
