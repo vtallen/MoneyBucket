@@ -86,12 +86,19 @@ void AccountModel::setSort(SortMode sorting) {
     m_sortMode = sorting;
 }
 
-void AccountModel::addTransaction(QDate date, QString description, double amount) {
+void AccountModel::addTransaction(const QDate &date, const QString &description, double amount) {
     if (date.isValid()) {
         table.append({date, description, amount});
         sort();
+
         emit dataChanged(QModelIndex{}, QModelIndex{});
         emit layoutChanged();
+    }
+}
+
+void AccountModel::removeTransaction(QModelIndex &index) {
+    if (index.isValid() && (index.row() < table.size())) {
+        table.remove(index.row());
     }
 }
 

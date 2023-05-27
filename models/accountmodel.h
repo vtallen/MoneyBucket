@@ -43,7 +43,8 @@ public:
 
     // Setters
     void setSort(SortMode sorting);
-    void addTransaction(QDate date, QString description, double amount);
+    void addTransaction(const QDate &date, const QString &description, double amount);
+    void removeTransaction(QModelIndex &index);
 
     // Functions
     void sort();

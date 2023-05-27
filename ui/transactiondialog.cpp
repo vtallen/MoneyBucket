@@ -20,15 +20,12 @@ TransactionDialog::~TransactionDialog()
 
 void TransactionDialog::dateChanged() {
     date = ui->dateEdit->date();
-    qDebug() << date;
 }
 
 void TransactionDialog::descriptionChanged() {
     description = ui->descriptionTextEdit->toPlainText();
-    qDebug() << description;
 }
 
 void TransactionDialog::amountChanged() {
     amount = ui->amountSpinBox->value();
-    qDebug() << amount;
 }

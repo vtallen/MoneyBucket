@@ -32,8 +32,8 @@ void AccountView::modelDataChanged() {
 
 void AccountView::addButtonClicked() {
     TransactionDialog dialog(this);
+
     if (dialog.exec() == QDialog::Accepted) {
-        qDebug() << "Accepted";
         if (dialog.date.isValid()) m_model->addTransaction(dialog.date, dialog.description, dialog.amount);
     }
 }
