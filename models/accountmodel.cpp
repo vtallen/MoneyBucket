@@ -5,15 +5,15 @@ AccountModel::AccountModel(QObject *parent, QString name, AccountType accountTyp
     , m_name{name}
     , m_accountType{accountType}
 {
-    QString date1 = "2004-05-26";
-
+    QString date1{"2004-05-26"};
     QString date2 = "2000-07-28";
     QString date3 = "2034-10-26";
-    table.append({QDate::fromString(date1, "yyyy-MM-dd"),"Bought snacks","500.66"});
-    table.append({QDate::fromString(date2, "yyyy-MM-dd"),"Was not alive","500.66"});
-    table.append({QDate::fromString(date3, "yyyy-MM-dd"),"FUTURE","500.66"});
-    sortByDate(true);
-
+    addTransaction(QDate::fromString(date1, "yyyy-MM-dd"), "Transaction 1", 500);
+    addTransaction(QDate::fromString(date2, "yyyy-MM-dd"), "Transaction 2", 500);
+    addTransaction(QDate::fromString(date3, "yyyy-MM-dd"), "Transaction 3", 500);
+    //table.append({QDate::fromString(date1, "yyyy-MM-dd"),"Bought snacks","500.66"});
+    //table.append({QDate::fromString(date2, "yyyy-MM-dd"),"Was not alive","500.66"});
+    //table.append({QDate::fromString(date3, "yyyy-MM-dd"),"FUTURE","500.66"});
 }
 
 int AccountModel::rowCount(const QModelIndex &parent) const
@@ -81,22 +81,43 @@ double AccountModel::getBalance() {
     return balance;
 }
 
+void AccountModel::setSort(SortMode sorting) {
+    m_sortMode = sorting;
+}
+
+void AccountModel::addTransaction(const QDate &date, const QString &description, double amount) {
+    if (date.isValid()) {
+        table.append({date, description, amount});
+        sort();
+
+        emit dataChanged(QModelIndex{}, QModelIndex{});
+        emit layoutChanged();
+    }
+}
+
+void AccountModel::removeTransaction(const QModelIndex &index) {
+    if (index.isValid() && (index.row() < table.size())) {
+        table.remove(index.row());
+    }
+    emit dataChanged(QModelIndex{}, QModelIndex{});
+    emit layoutChanged();
+}
 
 bool AccountModel::compareDateAscending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2) {
-    QVariant date1 = vec1[0];
-    QVariant date2 = vec2[0];
+    QVariant date1 = vec1[Columns::DATE];
+    QVariant date2 = vec2[Columns::DATE];
 
     return date1.toDate() < date2.toDate();
 }
 
 bool AccountModel::compareDateDescending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2) {
-    QVariant date1 = vec1[0];
-    QVariant date2 = vec2[0];
+    QVariant date1 = vec1[Columns::DATE];
+    QVariant date2 = vec2[Columns::DATE];
 
     return date1.toDate() > date2.toDate();
 }
 
-void AccountModel::sortByDate(const bool sortDescending = true) {
-    if (sortDescending) std::sort(table.begin(), table.end(), compareDateDescending);
+void AccountModel::sort() {
+    if (m_sortMode == SortMode::DATE_DESCENDING) std::sort(table.begin(), table.end(), compareDateDescending);
     else std::sort(table.begin(), table.end(), compareDateAscending);
 }
