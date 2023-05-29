@@ -11,7 +11,7 @@ AccountView::AccountView(QWidget *parent) :
 
     m_model = new AccountModel(this, "AMEX HYSA", AccountModel::BANK_ACCOUNT);
     ui->accountTableView->setModel(m_model);
-    ui->accountTableView->resizeColumnsToContents();
+    ui->accountTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->accountTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     connect(m_model, &QAbstractItemModel::dataChanged, this, &AccountView::modelDataChanged);
@@ -29,6 +29,7 @@ AccountView::~AccountView()
 
 void AccountView::modelDataChanged() {
     ui->balanceLabel->setText("$" + QString::number(m_model->getBalance()));
+    ui->accountTableView->resizeRowsToContents();
 }
 
 void AccountView::addButtonClicked() {
