@@ -12,11 +12,12 @@ AccountView::AccountView(QWidget *parent) :
     m_model = new AccountModel(this, "AMEX HYSA", AccountModel::BANK_ACCOUNT);
     ui->accountTableView->setModel(m_model);
     ui->accountTableView->resizeColumnsToContents();
+    ui->accountTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     connect(m_model, &QAbstractItemModel::dataChanged, this, &AccountView::modelDataChanged);
 
     connect(ui->addButton, &QPushButton::clicked, this, &AccountView::addButtonClicked);
-
+    connect(ui->removeButton, &QPushButton::clicked, this, &AccountView::removeButtonClicked);
     modelDataChanged();
 }
 
@@ -36,4 +37,13 @@ void AccountView::addButtonClicked() {
     if (dialog.exec() == QDialog::Accepted) {
         if (dialog.date.isValid()) m_model->addTransaction(dialog.date, dialog.description, dialog.amount);
     }
+}
+
+void AccountView::removeButtonClicked() {
+    if (!ui->accountTableView->selectionModel()->hasSelection()) return;
+
+    // If there is a selection, we know there is only one since the selection mode was set for the table view
+    auto selectedIndexes {ui->accountTableView->selectionModel()->selectedIndexes()};
+    m_model->removeTransaction(selectedIndexes.at(0));
+
 }

@@ -2,6 +2,8 @@
 #define ACCOUNTVIEW_H
 
 #include <QWidget>
+#include <QItemSelectionModel>
+
 #include "../models/accountmodel.h"
 
 namespace Ui {
@@ -19,11 +21,13 @@ public:
 private slots:
     void modelDataChanged();
     void addButtonClicked();
+    void removeButtonClicked();
 
 private:
     Ui::AccountView *ui;
 
     AccountModel *m_model{};
+    QItemSelectionModel *m_selectionModel{};
 };
 
 #endif // ACCOUNTVIEW_H

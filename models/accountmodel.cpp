@@ -5,8 +5,7 @@ AccountModel::AccountModel(QObject *parent, QString name, AccountType accountTyp
     , m_name{name}
     , m_accountType{accountType}
 {
-    QString date1 = "2004-05-26";
-
+    QString date1{"2004-05-26"};
     QString date2 = "2000-07-28";
     QString date3 = "2034-10-26";
     addTransaction(QDate::fromString(date1, "yyyy-MM-dd"), "Transaction 1", 500);
@@ -96,10 +95,12 @@ void AccountModel::addTransaction(const QDate &date, const QString &description,
     }
 }
 
-void AccountModel::removeTransaction(QModelIndex &index) {
+void AccountModel::removeTransaction(const QModelIndex &index) {
     if (index.isValid() && (index.row() < table.size())) {
         table.remove(index.row());
     }
+    emit dataChanged(QModelIndex{}, QModelIndex{});
+    emit layoutChanged();
 }
 
 bool AccountModel::compareDateAscending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2) {
