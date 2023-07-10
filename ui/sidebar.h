@@ -2,6 +2,9 @@
 #define SIDEBAR_H
 
 #include <QWidget>
+#include <QStandardItemModel>
+
+#include "../models/accounttree.h"
 
 namespace Ui {
 class Sidebar;

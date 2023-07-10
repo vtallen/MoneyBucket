@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QItemSelectionModel>
 
-#include "../models/accountmodel.h"
 
 namespace Ui {
 class AccountView;
@@ -26,8 +25,6 @@ private slots:
 private:
     Ui::AccountView *ui;
 
-    AccountModel *m_model{};
-    QItemSelectionModel *m_selectionModel{};
 };
 
 #endif // ACCOUNTVIEW_H

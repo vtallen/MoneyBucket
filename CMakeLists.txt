@@ -17,9 +17,8 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-
-        models/accountmodel.cpp models/accountmodel.h
-
+        models/accounttree.h models/accounttree.cpp
+        models/accountmodel.h models/accountmodel.cpp
         ui/sidebar.cpp ui/sidebar.h ui/sidebar.ui
         ui/transactiondialog.cpp ui/transactiondialog.h ui/transactiondialog.ui
         views/accountview.h views/accountview.cpp views/accountview.ui

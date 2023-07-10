@@ -99,7 +99,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QListView" name="accountsListView"/>
+    <widget class="QTreeView" name="accountsTreeView"/>
    </item>
   </layout>
  </widget>
