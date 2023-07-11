@@ -6,7 +6,7 @@ Sidebar::Sidebar(QWidget *parent) :
     ui(new Ui::Sidebar)
 {
     ui->setupUi(this);
-    TreeModel *model = new TreeModel("TEST", this);
+    AccountTreeModel *model = new AccountTreeModel("TEST", this);
     ui->accountsTreeView->setModel(model);
 }
 

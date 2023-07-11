@@ -1,28 +1,56 @@
-#ifndef ACCOUNT_TREE_ITEM
-#define ACCOUNT_TREE_ITEM
+#ifndef ACCOUNTMODEL_H
+#define ACCOUNTMODEL_H
 
-#include <QList>
+#include <QAbstractTableModel>
+#include <QVector>
 #include <QVariant>
+#include <QDate>
 
-class TreeItem
+#include <cassert>
+
+class AccountModel : public QAbstractTableModel
 {
+    enum AccountType {
+        BANK_ACCOUNT,
+        LOAN,
+        CREDIT_CARD,
+        MAX_ACCOUNT_TYPES,
+    };
+
 public:
-    explicit TreeItem(const QList<QVariant> &data, TreeItem *parentItem = nullptr);
-    ~TreeItem();
+    explicit AccountModel(QObject *parent = nullptr);
+    ~AccountModel() override;
 
-    void appendChild(TreeItem *child);
+    // QAbstractItemModel interface
+    int rowCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent) const override;
 
-    TreeItem *child(int row);
-    int childCount() const;
-    int columnCount() const;
-    QVariant data(int column) const;
-    int row() const;
-    TreeItem *parentItem();
+    bool hasChildren(const QModelIndex &parent) const override;
+
+    QVariant data(const QModelIndex &index, int role) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role) override;
+
+    bool insertRows(int row, int count, const QModelIndex &parent) override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 private:
-    QList<TreeItem *> m_childItems;
-    QList<QVariant> m_itemData;
-    TreeItem *m_parentItem;
+    enum TableColumns {
+        DATE,
+        AMOUNT,
+        DESCRIPTION,
+        MAX_TABLE_COLUMNS,
+    };
+
+    struct Transaction {
+        QDate date;
+        double amount;
+        QString description;
+    };
+
+    QVector<Transaction*> mTransactions;
 };
 
-#endif
+#endif // ACCOUNTMODEL_H

@@ -2,15 +2,15 @@
 #define ACCOUNT_TREE_H
 #include <QAbstractItemModel>
 #include <QList>
-#include "accountmodel.h"
+#include "accounttreeitem.h"
 
-class TreeModel : public QAbstractItemModel
+class AccountTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit TreeModel(const QString &data, QObject *parent = nullptr);
-    ~TreeModel();
+    explicit AccountTreeModel(const QString &data, QObject *parent = nullptr);
+    ~AccountTreeModel();
 
     QVariant data(const QModelIndex &index, int role) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
@@ -25,7 +25,7 @@ public:
 private:
     void setupModelData();
 
-    TreeItem *rootItem;
+    AccountTreeItem *rootItem;
 };
 
 #endif

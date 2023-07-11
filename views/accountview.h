@@ -3,7 +3,10 @@
 
 #include <QWidget>
 #include <QItemSelectionModel>
+#include <QHeaderView>
+#include <QAbstractTableModel>
 
+#include "../models/accountmodel.h"
 
 namespace Ui {
 class AccountView;

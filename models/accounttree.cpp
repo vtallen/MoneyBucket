@@ -1,75 +1,75 @@
 #include "accounttree.h"
-TreeModel::TreeModel(const QString &data, QObject *parent)
+AccountTreeModel::AccountTreeModel(const QString &data, QObject *parent)
     : QAbstractItemModel(parent)
 {
-    rootItem = new TreeItem({tr("Account"), tr("Balance")});
+    rootItem = new AccountTreeItem({tr("Account"), tr("Balance")});
 
-    TreeItem *bankAccounts = new TreeItem({"Bank Accounts", "---"}, rootItem);
-    TreeItem *creditCards = new TreeItem({"Credit Cards", "---"}, rootItem);
-    TreeItem *loans = new TreeItem({"Loans", "---"}, rootItem);
+    AccountTreeItem *bankAccounts = new AccountTreeItem({"Bank Accounts", "---"}, rootItem);
+    AccountTreeItem *creditCards = new AccountTreeItem({"Credit Cards", "---"}, rootItem);
+    AccountTreeItem *loans = new AccountTreeItem({"Loans", "---"}, rootItem);
     rootItem->appendChild(bankAccounts);
     rootItem->appendChild(creditCards);
     rootItem->appendChild(loans);
 }
 
-TreeModel::~TreeModel()
+AccountTreeModel::~AccountTreeModel()
 {
     delete rootItem;
 }
 
-QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex AccountTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (!hasIndex(row, column, parent))
         return QModelIndex();
 
-    TreeItem *parentItem;
+    AccountTreeItem *parentItem;
 
     if (!parent.isValid())
         parentItem = rootItem;
     else
-        parentItem = static_cast<TreeItem*>(parent.internalPointer());
+        parentItem = static_cast<AccountTreeItem*>(parent.internalPointer());
 
-    TreeItem *childItem = parentItem->child(row);
+    AccountTreeItem *childItem = parentItem->child(row);
     if (childItem)
         return createIndex(row, column, childItem);
     return QModelIndex();
 }
 
-QModelIndex TreeModel::parent(const QModelIndex &index) const
+QModelIndex AccountTreeModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid())
         return QModelIndex();
 
-    TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
-    TreeItem *parentItem = childItem->parentItem();
+    AccountTreeItem *childItem = static_cast<AccountTreeItem*>(index.internalPointer());
+    AccountTreeItem *parentItem = childItem->parentItem();
     if (parentItem == rootItem)
         return QModelIndex();
 
     return createIndex(parentItem->row(), 0, parentItem);
 }
 
-int TreeModel::rowCount(const QModelIndex &parent) const
+int AccountTreeModel::rowCount(const QModelIndex &parent) const
 {
-    TreeItem *parentItem;
+    AccountTreeItem *parentItem;
     if (parent.column() > 0)
         return 0;
 
     if (!parent.isValid())
         parentItem = rootItem;
     else
-        parentItem = static_cast<TreeItem*>(parent.internalPointer());
+        parentItem = static_cast<AccountTreeItem*>(parent.internalPointer());
 
     return parentItem->childCount();
 }
 
-int TreeModel::columnCount(const QModelIndex &parent) const
+int AccountTreeModel::columnCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
-        return static_cast<TreeItem*>(parent.internalPointer())->columnCount();
+        return static_cast<AccountTreeItem*>(parent.internalPointer())->columnCount();
     return rootItem->columnCount();
 }
 
-QVariant TreeModel::data(const QModelIndex &index, int role) const
+QVariant AccountTreeModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -77,12 +77,12 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole)
         return QVariant();
 
-    TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+    AccountTreeItem *item = static_cast<AccountTreeItem*>(index.internalPointer());
 
     return item->data(index.column());
 }
 
-Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
+Qt::ItemFlags AccountTreeModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::NoItemFlags;
@@ -90,7 +90,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index);
 }
 
-QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
+QVariant AccountTreeModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)

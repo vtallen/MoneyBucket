@@ -17,10 +17,14 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+
         models/accounttree.h models/accounttree.cpp
-        models/accountmodel.h models/accountmodel.cpp
+        models/accounttreeitem.h models/accounttreeitem.cpp
+        models/accountmodel.cpp models/accountmodel.h
+
         ui/sidebar.cpp ui/sidebar.h ui/sidebar.ui
         ui/transactiondialog.cpp ui/transactiondialog.h ui/transactiondialog.ui
+
         views/accountview.h views/accountview.cpp views/accountview.ui
 )
 
