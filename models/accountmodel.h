@@ -1,64 +1,56 @@
-#ifndef CUSTOMTABLEMODEL_H
-#define CUSTOMTABLEMODEL_H
+#ifndef ACCOUNTMODEL_H
+#define ACCOUNTMODEL_H
 
-#include <QAbstractItemModel>
-#include <QMainWindow>
-#include <QString>
+#include <QAbstractTableModel>
 #include <QVector>
+#include <QVariant>
 #include <QDate>
 
-class AccountModel: public QAbstractTableModel
+#include <cassert>
+
+class AccountModel : public QAbstractTableModel
 {
-public:
     enum AccountType {
         BANK_ACCOUNT,
+        LOAN,
         CREDIT_CARD,
+        MAX_ACCOUNT_TYPES,
     };
 
-    // If column order is changed, these functions will need to be changed as well: AccountModel::addTransaction
-    enum Columns {
-       DATE,
-       DESCRIPTION,
-       AMOUNT,
-       COLUMNS_MAX,
-    };
+public:
+    explicit AccountModel(QObject *parent = nullptr);
+    ~AccountModel() override;
 
-    enum SortMode {
-        DATE_ASCENDING,
-        DATE_DESCENDING,
-    };
+    // QAbstractItemModel interface
+    int rowCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent) const override;
 
-    explicit AccountModel(QObject *parent = nullptr, QString name = "untitled", AccountType accountType = BANK_ACCOUNT);
+    bool hasChildren(const QModelIndex &parent) const override;
 
-    // QAbstractItem Interface
-    int rowCount(const QModelIndex &parent) const;
-    int columnCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role);
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    QVariant data(const QModelIndex &index, int role) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
-    // Getters
-    double getBalance();
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role) override;
 
-    // Setters
-    void setSort(SortMode sorting);
-    void addTransaction(const QDate &date, const QString &description, double amount);
-    void removeTransaction(const QModelIndex &index);
-
-    // Functions
-    void sort();
+    bool insertRows(int row, int count, const QModelIndex &parent) override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 private:
-    // Members
-    QString m_name;
-    const AccountType m_accountType;
-    QVector<QVector<QVariant>> table;
-    SortMode m_sortMode{SortMode::DATE_DESCENDING};
+    enum TableColumns {
+        DATE,
+        AMOUNT,
+        DESCRIPTION,
+        MAX_TABLE_COLUMNS,
+    };
 
-    // Functions
-    static bool compareDateAscending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2);
-    static bool compareDateDescending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2);
+    struct Transaction {
+        QDate date;
+        double amount;
+        QString description;
+    };
+
+    QVector<Transaction*> mTransactions;
 };
 
-#endif // CUSTOMTABLEMODEL_H
+#endif // ACCOUNTMODEL_H

@@ -6,6 +6,8 @@ Sidebar::Sidebar(QWidget *parent) :
     ui(new Ui::Sidebar)
 {
     ui->setupUi(this);
+    AccountTreeModel *model = new AccountTreeModel("TEST", this);
+    ui->accountsTreeView->setModel(model);
 }
 
 Sidebar::~Sidebar()

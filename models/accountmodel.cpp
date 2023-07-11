@@ -1,123 +1,120 @@
 #include "accountmodel.h"
 
-AccountModel::AccountModel(QObject *parent, QString name, AccountType accountType)
+AccountModel::AccountModel(QObject *parent)
     : QAbstractTableModel{parent}
-    , m_name{name}
-    , m_accountType{accountType}
 {
-    QString date1{"2004-05-26"};
-    QString date2 = "2000-07-28";
-    QString date3 = "2034-10-26";
-    addTransaction(QDate::fromString(date1, "yyyy-MM-dd"), "Transaction 1", 500);
-    addTransaction(QDate::fromString(date2, "yyyy-MM-dd"), "Transaction 2", 500);
-    addTransaction(QDate::fromString(date3, "yyyy-MM-dd"), "Transaction 3", 500);
-    //table.append({QDate::fromString(date1, "yyyy-MM-dd"),"Bought snacks","500.66"});
-    //table.append({QDate::fromString(date2, "yyyy-MM-dd"),"Was not alive","500.66"});
-    //table.append({QDate::fromString(date3, "yyyy-MM-dd"),"FUTURE","500.66"});
+    mTransactions.push_back(new Transaction{QDate(2023, 1, 10), 10, "Test Transaction"});
+    mTransactions.push_back(new Transaction{QDate(2024, 1, 10), 10, "Test Transaction"});
+}
+
+AccountModel::~AccountModel() {
+    qDeleteAll(mTransactions);
 }
 
 int AccountModel::rowCount(const QModelIndex &parent) const
 {
-    if(!parent.isValid()) {
-        return table.size();
-    }
-    return 0;
+    return mTransactions.size();
 }
 
 int AccountModel::columnCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid()) {
-        return AccountModel::Columns::COLUMNS_MAX;
-    }
+    return TableColumns::MAX_TABLE_COLUMNS;
+}
 
-    return 0;
+bool AccountModel::hasChildren(const QModelIndex &parent) const
+{
+    return false;
 }
 
 QVariant AccountModel::data(const QModelIndex &index, int role) const
 {
-    if (role == Qt::DisplayRole) {
-        return table.at(index.row()).at(index.column());
-    }
-    return QVariant{};
-}
+    if (index.row() < 0 || index.row() >= mTransactions.count()) return QVariant();
 
-QVariant AccountModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-        switch (section) {
-        case 0:
-            return "Date";
-        case 1:
-            return "Description";
-        case 2:
-            return "Amount";
-        default:
-            return "";
-        }
+    Transaction *transaction = mTransactions[index.row()];
+    assert(transaction && "Transaction was nullptr");
+
+    if (role == Qt::DisplayRole || role == Qt::EditRole) {
+        if (index.column() == TableColumns::DATE) return transaction->date;
+        if (index.column() == TableColumns::AMOUNT) return transaction->amount;
+        if (index.column() == TableColumns::DESCRIPTION) return transaction->description;
     }
-    return QVariant{};
+
+    return QVariant();
 }
 
 bool AccountModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!(role == Qt::EditRole)) return false;
-    else if (value.toString() != "") table[index.row()][index.column()] = value;
-    else return false;
+    if (!index.isValid()) return false;
 
-    emit dataChanged(index, index);
-    return true;
+    Transaction *transaction = mTransactions[index.row()];
+    assert(transaction && "AccountModel::setData - transaction was nullptr");
+    bool hasChange = false;
+
+    if (role == Qt::EditRole) {
+        if (index.column() == DATE) {
+            if (transaction->date != value.toDate()) {
+                transaction->date = value.toDate();
+                hasChange = true;
+            }
+        } else if (index.column() == AMOUNT) {
+            if (transaction->amount != value.toDouble()) {
+                transaction->amount = value.toDouble();
+                hasChange = true;
+            }
+        } else if (index.column() == DESCRIPTION) {
+            if (transaction->description != value.toString()) {
+                transaction->description = value.toString();
+                hasChange = true;
+            }
+        }
+    }
+
+    if (hasChange) {
+        emit dataChanged(index, index);
+        return true;
+    }
+
+    return false;
+}
+
+QVariant AccountModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole) return QVariant();
+
+    if (orientation == Qt::Horizontal) {
+        switch (section) {
+        case DATE:
+            return QString("Date");
+        case AMOUNT:
+            return QString("Amount");
+        case DESCRIPTION:
+            return QString("Description");
+        }
+    }
+
+    return QVariant();
+}
+
+bool AccountModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
+{
+    if (orientation == Qt::Vertical) {
+        mTransactions[section]->date = value.toDate();
+    }
+
+    return false;
+}
+
+
+
+bool AccountModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+
 }
 
 Qt::ItemFlags AccountModel::flags(const QModelIndex &index) const
 {
+    if (!index.isValid()) return QAbstractTableModel::flags(index);
+
     return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 }
 
-double AccountModel::getBalance() {
-    double balance{};
-    for (int i{0}; i < table.size(); ++i) {
-        balance += table[i][2].toDouble();
-    }
-    return balance;
-}
-
-void AccountModel::setSort(SortMode sorting) {
-    m_sortMode = sorting;
-}
-
-void AccountModel::addTransaction(const QDate &date, const QString &description, double amount) {
-    if (date.isValid()) {
-        table.append({date, description, amount});
-        sort();
-
-        emit dataChanged(QModelIndex{}, QModelIndex{});
-        emit layoutChanged();
-    }
-}
-
-void AccountModel::removeTransaction(const QModelIndex &index) {
-    if (index.isValid() && (index.row() < table.size())) {
-        table.remove(index.row());
-    }
-    emit dataChanged(QModelIndex{}, QModelIndex{});
-    emit layoutChanged();
-}
-
-bool AccountModel::compareDateAscending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2) {
-    QVariant date1 = vec1[Columns::DATE];
-    QVariant date2 = vec2[Columns::DATE];
-
-    return date1.toDate() < date2.toDate();
-}
-
-bool AccountModel::compareDateDescending(const QVector<QVariant> &vec1, const QVector<QVariant> &vec2) {
-    QVariant date1 = vec1[Columns::DATE];
-    QVariant date2 = vec2[Columns::DATE];
-
-    return date1.toDate() > date2.toDate();
-}
-
-void AccountModel::sort() {
-    if (m_sortMode == SortMode::DATE_DESCENDING) std::sort(table.begin(), table.end(), compareDateDescending);
-    else std::sort(table.begin(), table.end(), compareDateAscending);
-}

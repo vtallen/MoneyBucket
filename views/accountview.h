@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QItemSelectionModel>
+#include <QHeaderView>
+#include <QAbstractTableModel>
 
 #include "../models/accountmodel.h"
 
@@ -26,8 +28,6 @@ private slots:
 private:
     Ui::AccountView *ui;
 
-    AccountModel *m_model{};
-    QItemSelectionModel *m_selectionModel{};
 };
 
 #endif // ACCOUNTVIEW_H

@@ -9,6 +9,8 @@
 #include "ui/sidebar.h"
 #include "views/accountview.h"
 
+#include "models/accounttree.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -24,7 +26,6 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QStandardItemModel *m_accountsModel{};
     QWidget *m_centralWidget{};
     Sidebar *m_sideBar{};
     AccountView *m_accountView{};
